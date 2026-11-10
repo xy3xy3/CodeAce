@@ -1,0 +1,42 @@
+name: codeace
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/pgvector/pgvector:pg18-bookworm}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-codeace}
+      POSTGRES_USER: ${POSTGRES_USER:-codeace}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports: ['127.0.0.1:${POSTGRES_PORT:-5436}:5432']
+    volumes: ['postgres_data:/var/lib/postgresql']
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  sandbox:
+    build:
+      context: .
+      dockerfile: sandbox/service.Dockerfile
+    restart: unless-stopped
+    environment:
+      SANDBOX_TOKEN: ${NUXT_SANDBOX_TOKEN:?Set NUXT_SANDBOX_TOKEN}
+      SANDBOX_IMAGE: codeace-runtime:local
+    ports: ['127.0.0.1:4311:4311']
+    volumes: ['/var/run/docker.sock:/var/run/docker.sock']
+  app:
+    profiles: [app]
+    build: .
+    restart: unless-stopped
+    environment:
+      NUXT_DATABASE_URL: postgres://${POSTGRES_USER:-codeace}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-codeace}
+      NUXT_SANDBOX_URL: http://sandbox:4311
+      NUXT_SANDBOX_TOKEN: ${NUXT_SANDBOX_TOKEN}
+      NUXT_IMPORT_KEY: ${NUXT_IMPORT_KEY}
+      NUXT_COOKIE_SECURE: ${NUXT_COOKIE_SECURE:-false}
+    ports: ['127.0.0.1:3000:3000']
+    depends_on:
+      postgres: { condition: service_healthy }
+      sandbox: { condition: service_started }
+volumes:
+  postgres_data:

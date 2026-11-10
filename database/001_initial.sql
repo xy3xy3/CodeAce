@@ -1,0 +1,13 @@
+CREATE EXTENSION IF NOT EXISTS vector;
+CREATE TABLE IF NOT EXISTS administrator(id int PRIMARY KEY CHECK(id=1), username text UNIQUE NOT NULL, password_hash text NOT NULL);
+CREATE TABLE IF NOT EXISTS sessions(token_hash text PRIMARY KEY, expires_at timestamptz NOT NULL);
+CREATE TABLE IF NOT EXISTS categories(name text PRIMARY KEY, position int NOT NULL DEFAULT 0);
+INSERT INTO categories(name,position) VALUES ('Hot100',1),('深度学习',2),('通用算法',3) ON CONFLICT DO NOTHING;
+CREATE TABLE IF NOT EXISTS problems(id bigserial PRIMARY KEY, source text NOT NULL, source_id text NOT NULL, data jsonb NOT NULL, version int NOT NULL DEFAULT 1, locally_edited boolean NOT NULL DEFAULT false, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(source,source_id));
+CREATE TABLE IF NOT EXISTS personal(problem_id bigint PRIMARY KEY REFERENCES problems(id) ON DELETE CASCADE, favorite boolean NOT NULL DEFAULT false, note text NOT NULL DEFAULT '', updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS drafts(problem_id bigint REFERENCES problems(id) ON DELETE CASCADE, language text NOT NULL, mode text NOT NULL, code text NOT NULL, updated_at timestamptz NOT NULL DEFAULT now(),PRIMARY KEY(problem_id,language,mode));
+CREATE TABLE IF NOT EXISTS submissions(id bigserial PRIMARY KEY,problem_id bigint REFERENCES problems(id) ON DELETE SET NULL,problem_title text NOT NULL,problem_snapshot jsonb NOT NULL,problem_version int NOT NULL,language text NOT NULL,mode text NOT NULL,code text NOT NULL,status text NOT NULL, result jsonb,created_at timestamptz NOT NULL DEFAULT now(),finished_at timestamptz);
+CREATE INDEX IF NOT EXISTS submissions_problem_created ON submissions(problem_id,created_at DESC);
+CREATE TABLE IF NOT EXISTS imports(id bigserial PRIMARY KEY, report jsonb NOT NULL,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE IF NOT EXISTS source_inventory(source text NOT NULL,source_id text NOT NULL,title text NOT NULL,category text NOT NULL,status text NOT NULL,reason text NOT NULL DEFAULT '',PRIMARY KEY(source,source_id));
+CREATE TABLE IF NOT EXISTS login_attempts(address_hash text PRIMARY KEY,attempts int NOT NULL DEFAULT 0,window_start timestamptz NOT NULL DEFAULT now());

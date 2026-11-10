@@ -1,0 +1,12 @@
+.git
+.agents
+.codegraph
+.comet
+.codex
+node_modules
+.nuxt
+.output
+.env
+.playwright-cli
+test-results
+playwright-report
