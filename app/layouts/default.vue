@@ -42,22 +42,32 @@ async function logout() {
     </header>
     <div v-if="route.path !== '/login'" class="shell-body">
       <aside class="sidebar" aria-label="练习导航">
-        <NuxtLink v-for="l in links" :key="l.to" :to="l.to" class="nav-item"
+        <NuxtLink
+          v-for="l in links"
+          :key="l.to"
+          :to="l.to"
+          class="nav-item"
+          exact-active-class="sidebar-route-match"
+          :class="{
+            selected:
+              route.path === l.to &&
+              (l.to !== '/' || !['favorite', 'wrong'].includes(String(route.query.status))),
+          }"
           ><component :is="l.icon" :size="19" />{{ l.label }}</NuxtLink
         >
         <div class="sidebar-divider" />
         <NuxtLink
           to="/?status=favorite"
           class="nav-item"
-          exact-active-class=""
-          :class="{ selected: route.query.status === 'favorite' }"
+          exact-active-class="sidebar-route-match"
+          :class="{ selected: route.path === '/' && route.query.status === 'favorite' }"
           ><BookOpen :size="19" />我的收藏</NuxtLink
         >
         <NuxtLink
           to="/?status=wrong"
           class="nav-item"
-          exact-active-class=""
-          :class="{ selected: route.query.status === 'wrong' }"
+          exact-active-class="sidebar-route-match"
+          :class="{ selected: route.path === '/' && route.query.status === 'wrong' }"
           ><History :size="19" />错题本</NuxtLink
         >
       </aside>

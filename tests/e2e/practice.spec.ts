@@ -15,6 +15,52 @@ async function editor(page: Page, code: string) {
   await page.keyboard.press('ControlOrMeta+A')
   await page.keyboard.insertText(code)
 }
+test('sidebar highlights only the current problem collection', async ({ page }) => {
+  await login(page)
+  const sidebar = page.getByRole('complementary', { name: '练习导航' })
+  for (const [label, status] of [
+    ['我的收藏', 'favorite'],
+    ['错题本', 'wrong'],
+    ['题库', ''],
+  ]) {
+    await sidebar.getByRole('link', { name: label, exact: true }).click()
+    await expect(page).toHaveURL(status ? new RegExp(`status=${status}`) : /\/$/)
+    await expect(sidebar.locator('.nav-item.selected')).toHaveCount(1)
+    await expect(sidebar.locator('.nav-item.selected')).toHaveText(label!)
+    for (const link of await sidebar.locator('.nav-item:not(.selected)').all()) {
+      await expect(link).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+    }
+  }
+  await page.goto('/?status=favorite&tag=Softmax')
+  await expect(sidebar.locator('.nav-item.selected')).toHaveText('我的收藏')
+  await page.reload()
+  await expect(sidebar.locator('.nav-item.selected')).toHaveText('我的收藏')
+})
+
+test('problem formulas render subscripts, sums and fractions with matching KaTeX styles', async ({
+  page,
+}) => {
+  await login(page)
+  for (const id of [1, 3]) {
+    await page.goto(`/problems/${id}?from=/?tag=Softmax`)
+    const formula = page.locator('.markdown .katex-display').first()
+    await expect(formula).toBeVisible()
+    await expect(page.locator('.katex-error')).toHaveCount(0)
+    // Vertical stacks must use the structure understood by the loaded KaTeX CSS.
+    await expect(formula.locator('.vlist-t').first()).toHaveCSS('display', 'inline-table')
+    expect(await formula.evaluate((el) => el.scrollHeight <= el.clientHeight)).toBe(true)
+    if (id === 1) {
+      await expect(formula.locator('.katex-html')).toContainText('log_softmax')
+      await expect(formula.locator('.katex-html')).toContainText('∑')
+    } else {
+      const line = formula.locator('.frac-line')
+      await expect(line).toHaveCount(1)
+      expect(
+        await line.evaluate((el) => parseFloat(getComputedStyle(el).borderBottomWidth)),
+      ).toBeGreaterThan(0)
+    }
+  }
+})
 test('single user practice, drafts, notes, real submissions and records', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
@@ -63,13 +109,18 @@ test('function mode, Python-only restrictions and saved filter context', async (
   await expect(page.getByLabel('代码语言')).toHaveValue('python3')
   await expect(page.getByLabel('代码语言').locator('option')).toHaveCount(1)
   await page.getByLabel('输入模式').selectOption('function')
-  await editor(page, 'class Solution:\n def subsets(self,nums):\n  result=[[]]\n  for n in nums: result += [s+[n] for s in result]\n  return result')
+  await editor(
+    page,
+    'class Solution:\n def subsets(self,nums):\n  result=[[]]\n  for n in nums: result += [s+[n] for s in result]\n  return result',
+  )
   await page.getByRole('button', { name: '运行', exact: true }).click()
   await expect(page.locator('.judge-result .status-badge')).toHaveText('AC', { timeout: 45000 })
   await page.getByRole('tab', { name: '自定义输入', exact: true }).click()
   await page.getByLabel('自定义测试输入').fill('{"nums":[1]}')
   await page.getByRole('button', { name: '运行', exact: true }).click()
-  await expect(page.locator('.judge-result .status-badge')).toHaveText('FINISHED', { timeout: 45000 })
+  await expect(page.locator('.judge-result .status-badge')).toHaveText('FINISHED', {
+    timeout: 45000,
+  })
   await expect(page.locator('.case-result')).toContainText('[[], [1]]')
   await page.getByRole('link', { name: '返回题库', exact: true }).click()
   await expect(page.getByLabel('搜索题目', { exact: true })).toHaveValue('子集')
