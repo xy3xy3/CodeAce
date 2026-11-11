@@ -42,13 +42,13 @@ describe('answer semantics', () => {
 })
 describe('source and language invariants', () => {
   const problems = JSON.parse(readFileSync('database/sources/problems.json', 'utf8'))
-  it('validates every converted source problem', () => {
+  it('validates every distributed exercise', () => {
     expect(problems.length).toBeGreaterThanOrEqual(60)
     for (const p of problems) expect(problemSchema.safeParse(p).success, p.title).toBe(true)
   })
   it('rejects C++ in Python-only categories', () => {
     const p = structuredClone(problems.find((x: any) => x.category === 'Hot100'))
-    p.modes.acm.templates.cpp17 = 'int main() {}'
+    p.modes.function.templates.cpp17 = 'int main() {}'
     expect(problemSchema.safeParse(p).success).toBe(false)
   })
 })

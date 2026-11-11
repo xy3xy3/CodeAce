@@ -101,9 +101,7 @@ async function removeCategory(name: string) {
 <template>
   <div class="page-heading">
     <div>
-      <div class="eyebrow">MAKE IT YOUR OWN</div>
       <h1 class="page-title">后台管理</h1>
-      <p class="subtitle">整理题目，构建属于自己的知识地图。</p>
     </div>
     <NuxtLink to="/admin/new"
       ><UiButton><Plus :size="15" />新建题目</UiButton></NuxtLink
@@ -238,10 +236,6 @@ async function removeCategory(name: string) {
           </p>
         </div>
         <UiButton variant="outline" size="sm" @click="refreshSource()">刷新</UiButton>
-      </div>
-      <div class="code-block small" style="margin-bottom: 20px">
-        pnpm source:sync → pnpm db:seed<br />源站在线采集已停用。题库由历史离线快照和独立编写练习组装，重复导入保留个人数据。不会发起
-        CodeKy 请求。
       </div>
       <div class="table-wrap" style="max-height: 520px">
         <table class="data-table">

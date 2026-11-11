@@ -18,7 +18,6 @@ onBeforeUnmount(() => clearInterval(timer))
     <NuxtLink to="/submissions" class="small muted"><ArrowLeft :size="13" /> 返回刷题记录</NuxtLink>
     <div class="page-heading" style="margin-top: 24px">
       <div>
-        <div class="eyebrow">SUBMISSION #{{ s.id }}</div>
         <h1 class="page-title">{{ s.problem_title }}</h1>
         <p class="subtitle">
           {{ new Date(s.created_at).toLocaleString('zh-CN') }} · {{ s.language }} · {{ s.mode }} ·

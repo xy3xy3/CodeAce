@@ -13,9 +13,7 @@ const dates = computed(() =>
 <template>
   <div class="page-heading">
     <div>
-      <div class="eyebrow">SMALL STEPS, REAL PROGRESS</div>
-      <h1 class="page-title">看见每一步成长</h1>
-      <p class="subtitle">积累不会辜负每一次认真思考。</p>
+      <h1 class="page-title">学习进度</h1>
     </div>
     <NuxtLink to="/"
       ><UiButton variant="outline">继续练习 <ArrowRight :size="14" /></UiButton
@@ -36,21 +34,20 @@ const dates = computed(() =>
       </div>
       <div class="stat-value" style="margin-top: 18px">
         {{ c.value
-        }}<span style="font-size: 12px; color: #a1ada4; margin-left: 8px">{{
-          c.label === '练习天数' ? '天' : '次'
+        }}<span style="font-size: 12px; color: #a8a8a8; margin-left: 8px">{{
+          c.label === '练习天数' ? '天' : c.label === '已通过题目' ? '道' : '次'
         }}</span>
       </div>
     </div>
   </div>
   <section class="panel content-gap" style="padding: 24px">
     <div class="section-heading">练习足迹</div>
-    <p class="subtitle">最近 140 天，每一个色块都是你的坚持。</p>
     <div class="activity-grid">
       <div
         v-for="d in dates"
         :key="d.day"
         class="activity-cell"
-        :style="{ background: d.count ? (d.count > 3 ? '#46895c' : '#a7cdb0') : '#edf2ed' }"
+        :style="{ background: d.count ? (d.count > 3 ? '#46895c' : '#267c50') : '#353535' }"
         :title="d.day + ' · ' + d.count + ' 次提交'"
       />
     </div>

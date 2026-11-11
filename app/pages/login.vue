@@ -30,16 +30,6 @@ async function login() {
 </script>
 <template>
   <div class="login-page">
-    <div class="login-intro">
-      <div class="eyebrow">A LITTLE BETTER, EVERY DAY</div>
-      <h1>留一点时间，<br />给更好的自己<span>。</span></h1>
-      <p>算法思维，从每一次认真练习开始。<br />欢迎回到你的个人刷题空间。</p>
-      <div class="login-code">
-        <span>// today.ts</span>
-        <p>const progress = practice + patience;</p>
-        <span>// 让每一行代码，都有回响。</span>
-      </div>
-    </div>
     <form class="panel login-form" @submit.prevent="login">
       <span class="brand-mark" style="margin-bottom: 24px"><LockKeyhole :size="19" /></span>
       <h2 style="font-size: 23px; font-weight: 650">欢迎回来</h2>
@@ -69,22 +59,19 @@ async function login() {
       <UiButton class="w-full mt-7" type="submit" :disabled="busy || !ready"
         >{{ busy ? '正在登录…' : '进入学习空间' }}<ArrowRight :size="15"
       /></UiButton>
-      <p style="font-size: 10px; color: #a3afa6; text-align: center; margin-top: 22px">
-        仅供个人使用 · 无需注册
-      </p>
     </form>
   </div>
 </template>
 <style scoped>
 .login-page {
-  max-width: 1040px;
+  max-width: 480px;
   min-height: calc(100vh - 72px);
   margin: auto;
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 90px;
-  padding: 50px;
+  gap: 0;
+  padding: 32px 20px;
 }
 .login-intro h1 {
   font-size: 43px;
@@ -98,7 +85,7 @@ async function login() {
 .login-intro > p {
   margin-top: 20px;
   line-height: 2.1;
-  color: #8c9a90;
+  color: #a8a8a8;
   font-size: 13px;
 }
 .login-code {
@@ -108,10 +95,10 @@ async function login() {
   font:
     12px/2.4 Consolas,
     monospace;
-  color: #49815d;
+  color: #d2d2d2;
 }
 .login-code span {
-  color: #a1b0a4;
+  color: #a8a8a8;
 }
 .login-form {
   padding: 36px;

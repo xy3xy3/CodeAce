@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { EditorView, basicSetup } from 'codemirror'
 import { python } from '@codemirror/lang-python'
+import { oneDark } from '@codemirror/theme-one-dark'
 import { cpp } from '@codemirror/lang-cpp'
 const props = defineProps<{ modelValue: string; language?: string }>(),
   emit = defineEmits<{ 'update:modelValue': [string] }>(),
@@ -11,23 +12,24 @@ onMounted(() => {
     doc: props.modelValue,
     extensions: [
       basicSetup,
+      oneDark,
       props.language === 'cpp17' ? cpp() : python(),
       EditorView.contentAttributes.of({ 'aria-label': '代码编辑器', spellcheck: 'false' }),
       EditorView.theme({
-        '&': { height: '100%', fontSize: '13px', backgroundColor: '#fcfdfc' },
+        '&': { height: '100%', fontSize: '14px', backgroundColor: '#242424' },
         '.cm-content': {
           fontFamily: 'Consolas, "SFMono-Regular", monospace',
           padding: '20px 0',
           minHeight: '360px',
         },
         '.cm-gutters': {
-          backgroundColor: '#fcfdfc',
+          backgroundColor: '#242424',
           color: '#b6c1b8',
           border: 'none',
           paddingRight: '12px',
         },
         '.cm-line': { paddingLeft: '12px' },
-        '.cm-activeLine': { background: '#f0f6f1' },
+        '.cm-activeLine': { background: '#2d2d2d' },
         '.cm-activeLineGutter': { background: 'transparent' },
         '.cm-scroller': { overflow: 'auto' },
       }),

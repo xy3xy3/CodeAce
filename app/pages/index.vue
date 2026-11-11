@@ -44,6 +44,20 @@ watch(
     })
   },
 )
+watch(
+  () => route.query,
+  (query) => {
+    const next = {
+      q: String(query.q || ''),
+      category: String(query.category || ''),
+      difficulty: String(query.difficulty || ''),
+      tag: String(query.tag || ''),
+      status: String(query.status || ''),
+      page: Number(query.page) || 1,
+    }
+    if (JSON.stringify(next) !== JSON.stringify(filters)) Object.assign(filters, next)
+  },
+)
 const cards = [
   {
     category: 'Hot100',
@@ -85,62 +99,34 @@ onMounted(() => window.addEventListener('keydown', shortcut))
 onBeforeUnmount(() => window.removeEventListener('keydown', shortcut))
 </script>
 <template>
-  <div class="page-heading">
-    <div>
-      <div class="eyebrow">YOUR DAILY PRACTICE</div>
-      <h1 class="page-title">
-        把每一次练习，变成进步<span style="color: var(--primary)">。</span>
-      </h1>
-      <p class="subtitle">从一道题开始，在自己的节奏里，走得更远。</p>
-    </div>
-    <div class="today-note">
-      <span class="pulse-dot" />今天也是适合写代码的一天 <Code2 :size="14" />
-    </div>
+  <div class="catalog-heading">
+    <h1 class="page-title">题库</h1>
+    <NuxtLink to="/progress" class="catalog-progress"
+      ><Check :size="17" /> {{ stats?.solved || 0 }} / {{ stats?.total || 0 }} 已完成</NuxtLink
+    >
   </div>
-  <div class="metric-grid">
+  <div class="category-tabs" aria-label="题目分类">
     <button
       v-for="c in cards"
       :key="c.name"
-      class="panel category-card"
       :class="{ selected: filters.category === c.category }"
       @click="filters.category = c.category"
     >
-      <div class="category-top">
-        <span class="category-icon" :style="{ background: c.color }"
-          ><component :is="c.icon" :size="20" /></span
-        ><ArrowUpRight :size="15" style="color: #a7b3a9" />
-      </div>
-      <h2>{{ c.name }}</h2>
-      <p>{{ c.caption }}</p>
-      <div class="category-progress">
-        <span
-          ><strong>{{ count(c.category).solved }}</strong> /
-          {{ count(c.category).total }} 已完成</span
-        ><span
-          >{{
-            count(c.category).total
-              ? Math.round((count(c.category).solved / count(c.category).total) * 100)
-              : 0
-          }}%</span
-        >
-      </div>
-      <div class="line-progress">
-        <div
-          :style="{
-            width: (count(c.category).solved / (count(c.category).total || 1)) * 100 + '%',
-          }"
-        />
-      </div>
+      <component :is="c.icon" :size="19" />{{ c.name }}<span>{{ count(c.category).total }}</span>
+    </button>
+  </div>
+  <div class="topic-strip" aria-label="知识点快捷筛选">
+    <button :class="{ selected: !filters.tag }" @click="filters.tag = ''">全部知识点</button
+    ><button
+      v-for="tag in list?.tags?.slice(0, 12)"
+      :key="tag"
+      :class="{ selected: filters.tag === tag }"
+      @click="filters.tag = filters.tag === tag ? '' : tag"
+    >
+      {{ tag }}
     </button>
   </div>
   <section class="panel content-gap">
-    <div class="list-heading">
-      <div class="inline-actions">
-        <span class="section-heading">练习题库</span
-        ><span class="pill">{{ list?.total || 0 }} 道题目</span>
-      </div>
-      <NuxtLink to="/progress" class="small muted">查看学习进度 <ArrowRight :size="13" /></NuxtLink>
-    </div>
     <div style="padding: 0 20px 20px">
       <div class="filter-bar">
         <div class="search-wrap">
@@ -215,7 +201,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', shortcut))
               >
             </td>
             <td>
-              <span class="muted" style="font-size: 11px">{{ p.category }}</span>
+              <span class="muted" style="font-size: 13px">{{ p.category }}</span>
             </td>
             <td style="text-align: right">
               <NuxtLink
@@ -258,119 +244,92 @@ onBeforeUnmount(() => window.removeEventListener('keydown', shortcut))
       </div>
     </div>
   </section>
-  <footer class="site-footer">
-    <span>每一次 AC，都是积累的回声。</span><span>CODEACE · BUILT FOR YOUR GROWTH</span>
-  </footer>
 </template>
 <style scoped>
-.today-note {
+.catalog-heading {
   display: flex;
   align-items: center;
-  gap: 9px;
-  background: #f0f5f0;
-  color: #7f9582;
-  font-size: 10px;
-  padding: 9px 12px;
-  border-radius: 6px;
-  margin-top: 12px;
-}
-.pulse-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #7ca48b;
-}
-.category-card {
-  text-align: left;
-  padding: 22px;
-  transition:
-    border-color 0.2s,
-    transform 0.2s;
-}
-.category-card:hover {
-  transform: translateY(-2px);
-  border-color: #bed5c5;
-}
-.category-card.selected {
-  border-color: #abcdb8;
-  box-shadow: 0 0 0 1px #edf5ee;
-}
-.category-top {
-  display: flex;
   justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+}
+.catalog-progress {
+  display: flex;
   align-items: center;
-  margin-bottom: 18px;
+  gap: 8px;
+  color: var(--muted-foreground);
 }
-.category-icon {
-  width: 38px;
-  height: 38px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  color: #4b795c;
+.category-tabs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 24px;
 }
-.category-card h2 {
+.category-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--secondary);
+  border-radius: 28px;
+  padding: 13px 20px;
   font-size: 15px;
-  font-weight: 650;
 }
-.category-card > p {
-  font-size: 10px;
-  color: #9ba79e;
-  margin-top: 7px;
+.category-tabs button.selected {
+  background: #eee;
+  color: #202020;
 }
-.category-progress {
-  margin: 24px 0 9px;
-  font-size: 10px;
-  color: #9eaba1;
+.category-tabs button span {
+  opacity: 0.65;
+}
+.topic-strip {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
 }
-.category-progress strong {
-  color: #62856c;
-  font-weight: 600;
+.topic-strip button {
+  padding: 7px 11px;
+  color: var(--muted-foreground);
+  border-radius: 6px;
 }
-.list-heading {
-  padding: 22px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.topic-strip button:hover,
+.topic-strip button.selected {
+  color: var(--foreground);
+  background: var(--secondary);
+}
+.content-gap {
+  border: 0;
+  background: transparent;
+}
+.content-gap > div:first-child {
+  padding: 0 0 20px !important;
 }
 .practice-arrow {
   display: inline-grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid #e7ede8;
-  border-radius: 6px;
-  color: #8ca28f;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--muted-foreground);
 }
 .practice-arrow:hover {
-  background: #e9f3eb;
+  background: var(--secondary);
   color: var(--primary);
 }
 @media (max-width: 760px) {
-  .today-note {
-    display: none;
+  .catalog-heading {
+    margin-bottom: 20px;
   }
-  .category-card {
-    padding: 14px;
+  .category-tabs {
+    gap: 8px;
   }
-  .category-card h2 {
+  .category-tabs button {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  .catalog-progress {
     font-size: 12px;
-  }
-  .category-card > p {
-    display: none;
-  }
-  .category-progress {
-    margin-top: 18px;
-    font-size: 9px;
-  }
-  .category-icon {
-    width: 30px;
-    height: 30px;
-  }
-  .category-top {
-    margin-bottom: 12px;
   }
 }
 </style>

@@ -19,9 +19,7 @@ const format = (s: string) => new Date(s).toLocaleString('zh-CN', { hour12: fals
 <template>
   <div class="page-heading">
     <div>
-      <div class="eyebrow">EVERY ATTEMPT COUNTS</div>
       <h1 class="page-title">刷题记录</h1>
-      <p class="subtitle">记录思考的过程，也记录成长的轨迹。</p>
     </div>
     <UiButton variant="outline" @click="refresh()">刷新记录</UiButton>
   </div>
@@ -98,7 +96,7 @@ const format = (s: string) => new Date(s).toLocaleString('zh-CN', { hour12: fals
               {{ s.result?.timeMs ?? '–' }} ms /
               {{ s.result?.memoryKb ? Math.round(s.result.memoryKb / 1024) + ' MB' : '–' }}
             </td>
-            <td class="muted" style="font-size: 11px">{{ format(s.created_at) }}</td>
+            <td class="muted" style="font-size: 13px">{{ format(s.created_at) }}</td>
           </tr>
         </tbody>
       </table>
@@ -106,7 +104,6 @@ const format = (s: string) => new Date(s).toLocaleString('zh-CN', { hour12: fals
     <div v-if="!list?.items?.length" class="empty">
       <History :size="28" style="margin-bottom: 12px; color: #b5c4b7" />
       <p>还没有提交记录</p>
-      <p class="small">完成一次正式提交，让成长留下足迹。</p>
     </div>
     <div class="pagination">
       <span>共 {{ list?.total || 0 }} 次提交</span>

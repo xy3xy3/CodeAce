@@ -95,13 +95,13 @@ add(1571,'findDuplicate','nums','数组 nums 长度为 n+1，每个元素都在 
 ({'nums':[1,3,4,2,2]},2),({'nums':[3,1,3,4,2]},3),({'nums':[1,1]},1),({'nums':[2,2,2,2,2]},2)],tags=['快慢指针'])
 slugs = '''subsets letter-combinations-of-a-phone-number combination-sum generate-parentheses palindrome-partitioning n-queens search-insert-position find-first-and-last-position-of-element-in-sorted-array search-in-rotated-sorted-array find-minimum-in-rotated-sorted-array median-of-two-sorted-arrays valid-parentheses min-stack decode-string daily-temperatures largest-rectangle-in-histogram kth-largest-element-in-an-array top-k-frequent-elements find-median-from-data-stream best-time-to-buy-and-sell-stock jump-game jump-game-ii partition-labels climbing-stairs pascals-triangle house-robber perfect-squares coin-change word-break longest-increasing-subsequence maximum-product-subarray partition-equal-subset-sum longest-valid-parentheses unique-paths minimum-path-sum longest-palindromic-substring longest-common-subsequence edit-distance single-number majority-element sort-colors next-permutation find-the-duplicate-number'''.split()
 assert len(slugs) == 43
-inventory = {p['id']:p for p in json.loads((ROOT/'database/sources/codeky.json').read_text())['inventory']}
+inventory = {p['id']:p for p in json.loads((ROOT/'database/hot-topics.json').read_text())}
 for row in rows:
     row['sourceUrl'] = 'https://leetcode.com/problems/' + slugs[row['id']-1529] + '/'
     original = inventory[row['id']]
     row['title'] = original['title']
     row['difficulty'] = original['difficulty']
-    row['constraints'] = re.sub('</?mark>', '', original['data_range'])
+    row['constraints'] = re.sub('</?mark>', '', original['constraints'])
     if row['id'] == 1530:
         row['constraints'] = row['constraints'].replace('1 <= digits.length', '0 <= digits.length')
     if row['id'] == 1542:

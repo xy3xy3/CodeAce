@@ -1,0 +1,7 @@
+schema: comet.native.delta.v1
+capability: personal-practice
+base_hash: b2e19d4ee1adfe25321fbb2c8c74f90b1a5ba10185c2ef163376de827e9e26c9
+base_version: 1
+legacy_hash: f4c19d6ad190a9fcdc189d8f94412c201a3aaa6c9536497ce237a561f3c21a08
+base_requirements: {}
+operations: []

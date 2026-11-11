@@ -95,7 +95,6 @@ function enableCpp() {
   <NuxtLink to="/admin" class="small muted"><ArrowLeft :size="13" /> 返回后台管理</NuxtLink>
   <div class="page-heading" style="margin-top: 22px">
     <div>
-      <div class="eyebrow">PROBLEM EDITOR</div>
       <h1 class="page-title">{{ isNew ? '新建题目' : form.title }}</h1>
       <p class="subtitle">
         {{

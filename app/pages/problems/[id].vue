@@ -351,10 +351,7 @@ async function execute(submit = false) {
             </div>
             <div v-if="p.sourceUrl" style="margin-top: 20px">
               <a :href="p.sourceUrl" target="_blank" rel="noopener noreferrer" class="small muted"
-                >{{ p.source === 'codeky' ? '来源：CodeKy' : '独立练习 · 参考资料' }} #{{
-                  p.sourceId
-                }}
-                <ExternalLink :size="11"
+                >参考资料 #{{ p.sourceId }} <ExternalLink :size="11"
               /></a>
             </div>
             <div
@@ -376,7 +373,6 @@ async function execute(submit = false) {
             <div v-else class="empty">
               <Lightbulb :size="25" style="margin-bottom: 12px" />
               <p>暂无可用题解</p>
-              <p class="small">先试着独立思考，也可以在后台整理自己的解法。</p>
             </div>
             <NuxtLink :to="'/admin/' + p.id" class="small" style="color: var(--primary)"
               >在后台编辑题解 <ArrowRight :size="12" /></NuxtLink
@@ -386,9 +382,7 @@ async function execute(submit = false) {
               <h2 class="section-heading">提交记录</h2>
               <button class="small muted" @click="refreshRecords()">刷新</button>
             </div>
-            <div v-if="!records?.items?.length" class="empty">
-              还没有提交记录<br /><span class="small">完成一次正式提交，让思考留下痕迹。</span>
-            </div>
+            <div v-if="!records?.items?.length" class="empty">还没有提交记录</div>
             <NuxtLink
               v-for="r in records?.items"
               :key="r.id"
@@ -480,10 +474,8 @@ async function execute(submit = false) {
               role="tab"
               @click="custom = true"
             >
-              自定义输入</button
-            ><span style="margin-left: auto; align-self: center; color: #a4afa7; font-size: 10px"
-              ><Terminal :size="12" /> &nbsp;CONSOLE</span
-            >
+              自定义输入
+            </button>
           </div>
           <div class="test-content">
             <UiTextarea
@@ -492,11 +484,9 @@ async function execute(submit = false) {
               aria-label="自定义测试输入"
               style="min-height: 95px; font-family: Consolas, monospace; font-size: 12px"
             />
-            <div v-else class="small muted">
-              运行 {{ variant?.cases?.length || 0 }} 个公开用例。正式提交会运行该题的全部判题用例。
-            </div>
+            <div v-else class="small muted">公开用例 {{ variant?.cases?.length || 0 }}</div>
             <div v-if="!result" class="console-empty">
-              <Terminal :size="20" /><span>点击「运行」，看看代码的表现。</span>
+              <Terminal :size="20" /><span>等待运行</span>
             </div>
             <div v-else class="judge-result" aria-live="polite">
               <div class="inline-actions" style="justify-content: space-between">
@@ -545,8 +535,7 @@ async function execute(submit = false) {
         min="35"
         max="65"
         aria-label="题面宽度"
-      /><span>{{ width }}%</span
-      ><span style="margin-left: auto">保持专注，享受解决问题的过程。</span>
+      /><span>{{ width }}%</span>
     </div>
   </div>
 </template>
@@ -582,7 +571,7 @@ async function execute(submit = false) {
   padding: 25px;
   max-height: calc(100vh - 230px);
   overflow: auto;
-  min-height: 640px;
+  min-height: 520px;
 }
 .problem-meta {
   display: flex;
@@ -595,30 +584,30 @@ async function execute(submit = false) {
   font-size: 13px;
   font-weight: 650;
   margin: 24px 0 12px;
-  color: #344f3e;
+  color: #d2d2d2;
 }
 .sample-card {
   border: 1px solid var(--border);
   border-radius: 8px;
   margin: 12px 0;
-  background: #fcfdfb;
+  background: #2c2c2c;
   padding: 14px;
 }
 .sample-title {
   font-weight: 600;
-  font-size: 11px;
+  font-size: 13px;
   margin-bottom: 12px;
-  color: #708a75;
+  color: #a8a8a8;
 }
 .sample-pair {
   display: grid;
   grid-template-columns: 36px 1fr;
   gap: 10px;
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 9px;
 }
 .sample-pair > span {
-  color: #96a398;
+  color: #a8a8a8;
 }
 .sample-pair pre {
   margin: 0;
@@ -627,10 +616,10 @@ async function execute(submit = false) {
     monospace;
   white-space: pre-wrap;
   word-break: break-word;
-  color: #506c56;
+  color: #d2d2d2;
 }
 .hint-card {
-  background: #faf8ef;
+  background: #2c2c2c;
   border: 1px solid #eee8d4;
   border-radius: 8px;
   padding: 13px 15px;
@@ -639,22 +628,22 @@ async function execute(submit = false) {
 .hint-card summary {
   cursor: pointer;
   list-style: none;
-  font-size: 11px;
-  color: #a88d50;
+  font-size: 13px;
+  color: #a8a8a8;
 }
 .limit-row {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
-  color: #9eaba0;
-  font-size: 10px;
+  color: #a8a8a8;
+  font-size: 13px;
   margin-top: 28px;
 }
 .similar-link {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
-  color: #789080;
+  font-size: 13px;
+  color: #a8a8a8;
   padding: 9px 0;
 }
 .record-row {
@@ -687,8 +676,8 @@ async function execute(submit = false) {
 .editor-select {
   background: transparent;
   border: none;
-  color: #6c8372;
-  font-size: 10px;
+  color: #d2d2d2;
+  font-size: 13px;
   max-width: 95px;
 }
 .editor-footer {
@@ -696,8 +685,8 @@ async function execute(submit = false) {
   padding: 8px 16px;
   display: flex;
   justify-content: space-between;
-  font-size: 9px;
-  color: #a9b4ab;
+  font-size: 13px;
+  color: #a8a8a8;
 }
 .test-content {
   padding: 18px;
@@ -710,7 +699,7 @@ async function execute(submit = false) {
   flex-direction: column;
   gap: 12px;
   color: #b5bfb6;
-  font-size: 11px;
+  font-size: 13px;
 }
 .judge-result {
   margin-top: 15px;
@@ -720,7 +709,7 @@ async function execute(submit = false) {
 }
 .case-result .code-block {
   padding: 10px;
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 5px;
 }
 .error-output {
@@ -730,8 +719,8 @@ async function execute(submit = false) {
   display: flex;
   gap: 9px;
   align-items: center;
-  font-size: 9px;
-  color: #a5b0a7;
+  font-size: 13px;
+  color: #a8a8a8;
   margin-top: 12px;
 }
 .resize-control input {
@@ -748,13 +737,13 @@ async function execute(submit = false) {
     padding: 0 16px;
   }
   .panel-tabs button {
-    font-size: 10px;
+    font-size: 13px;
   }
   .editor-heading {
     flex-wrap: wrap;
   }
   .statement-scroll {
-    min-height: 600px;
+    min-height: 480px;
   }
 }
 @media (max-width: 850px) {
@@ -783,6 +772,42 @@ async function execute(submit = false) {
   }
   .workbench-nav {
     flex-wrap: wrap;
+  }
+}
+
+.statement-scroll {
+  max-height: calc(100vh - 190px);
+}
+.minor-heading {
+  color: #eee;
+  font-size: 15px;
+}
+.sample-card,
+.hint-card {
+  background: #2d2d2d;
+  border-color: #3b3b3b;
+}
+.sample-pair pre {
+  color: #ddd;
+  font-size: 14px;
+}
+.editor-heading {
+  background: #303030;
+}
+.editor-select {
+  color: #ddd;
+  font-size: 13px;
+  max-width: 120px;
+}
+.editor-footer,
+.saving-state,
+.resize-control {
+  font-size: 12px;
+  color: #aaa;
+}
+@media (max-width: 850px) {
+  .statement-scroll {
+    max-height: none;
   }
 }
 </style>
